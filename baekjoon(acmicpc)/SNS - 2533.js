@@ -28,6 +28,11 @@ function bfs(tree, subTree, isParentEarly) {
 				Math.min(1 + bfs(tree, tree[cur], true), bfs(tree, tree[cur], false)),
 			0
 		);
+	/* 
+        문제 원인: 
+        서브 트리의 각 노드를 bfs 한 값을 비교하고 합치는 게 아니라
+        서브 트리의 각 노드를 bfs 한 값을 합치고 비교해야 함.
+    */
 	return bfs(tree, subTree, true);
 }
 
