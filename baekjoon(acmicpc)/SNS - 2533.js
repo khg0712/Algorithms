@@ -1,10 +1,14 @@
 function solution(input) {
-	const splittedInput = input.split("\n").map((line) => line.split(" "));
+	const splittedInput = input
+		.split("\n")
+		.filter((e) => e !== "")
+		.map((line) => line.split(" "));
 	const formattedInput = splittedInput.map((arr) =>
 		arr.map((e) => parseInt(e))
 	);
 	const [nodeCnt] = formattedInput.shift();
 	const tree = createTree(nodeCnt, formattedInput);
+	// console.log(tree);
 	console.log(bfs(tree, tree[1], true));
 }
 
@@ -17,30 +21,44 @@ function createTree(nodeCnt, nodes) {
 }
 
 function bfs(tree, subTree, isParentEarly) {
+	/*
+        실패 원인:
+        1열로 연결된 트리는 무조건 1이 나오게 됨;
+    */
 	if (subTree.length === 0) {
-		console.log(isParentEarly ? 0 : 1);
 		return isParentEarly ? 0 : 1;
 	}
-	if (isParentEarly)
-		return subTree.reduce(
-			(prev, cur) =>
-				prev +
-				Math.min(1 + bfs(tree, tree[cur], true), bfs(tree, tree[cur], false)),
-			0
+	if (isParentEarly) {
+		const result = Math.min(
+			1 + subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], true), 0),
+			subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], false), 0)
 		);
-	/* 
-        문제 원인: 
-        서브 트리의 각 노드를 bfs 한 값을 비교하고 합치는 게 아니라
-        서브 트리의 각 노드를 bfs 한 값을 합치고 비교해야 함.
-    */
+		// console.log(result);
+		return result;
+	}
 	return bfs(tree, subTree, true);
 }
 
-solution(`8
-1 2
-1 3
-1 4
-2 5
-2 6
-4 7
-4 8`);
+// solution(`3
+// 1 2
+// 2 3`);
+
+// console.log(
+// 	"100\n" +
+// 		new Array(100)
+// 			.fill()
+// 			.map((e, i) => `${i} ${i + 1}\n`)
+// 			.join("")
+// );
+const num = 30;
+solution(
+	`${num}\n` +
+		new Array(num - 1)
+			.fill()
+			.map((e, i) => `${i + 1} ${i + 2}\n`)
+			.join("")
+);
+
+// let fs = require("fs");
+// let input = fs.readFileSync("/dev/stdin").toString();
+// solution(input);
