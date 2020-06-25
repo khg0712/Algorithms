@@ -8,7 +8,6 @@ function solution(input) {
 	);
 	const [nodeCnt] = formattedInput.shift();
 	const tree = createTree(nodeCnt, formattedInput);
-	// console.log(tree);
 	console.log(bfs(tree, tree[1], true));
 }
 
@@ -21,10 +20,6 @@ function createTree(nodeCnt, nodes) {
 }
 
 function bfs(tree, subTree, isParentEarly) {
-	/*
-        실패 원인:
-        1열로 연결된 트리는 무조건 1이 나오게 됨;
-    */
 	if (subTree.length === 0) {
 		return isParentEarly ? 0 : 1;
 	}
@@ -33,32 +28,29 @@ function bfs(tree, subTree, isParentEarly) {
 			1 + subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], true), 0),
 			subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], false), 0)
 		);
-		// console.log(result);
 		return result;
 	}
-	return bfs(tree, subTree, true);
+	return (
+		1 + subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], true), 0)
+	);
 }
 
-// solution(`3
-// 1 2
-// 2 3`);
+solution(`16
+1 2
+1 3
+3 4
+4 5
+2 6
+2 7
+6 8
+8 9
+8 10
+8 11
+8 12
+10 13
+13 14
+14 16
+14 15`);
 
-// console.log(
-// 	"100\n" +
-// 		new Array(100)
-// 			.fill()
-// 			.map((e, i) => `${i} ${i + 1}\n`)
-// 			.join("")
-// );
-const num = 30;
-solution(
-	`${num}\n` +
-		new Array(num - 1)
-			.fill()
-			.map((e, i) => `${i + 1} ${i + 2}\n`)
-			.join("")
-);
-
-// let fs = require("fs");
-// let input = fs.readFileSync("/dev/stdin").toString();
-// solution(input);
+// 난 잘 풀었는데 왜 실패인것인가
+// dp로 해결할 거야!
