@@ -1,41 +1,28 @@
-function solution(input) {
-	const splittedInput = input
-		.split("\n")
-		.filter((e) => e !== "")
-		.map((line) => line.split(" "));
-	const formattedInput = splittedInput.map((arr) =>
-		arr.map((e) => parseInt(e))
-	);
-	const [nodeCnt] = formattedInput.shift();
-	const tree = createTree(nodeCnt, formattedInput);
-	console.log(bfs(tree, tree[1], true));
+class Node {
+	constructor(parent, value) {
+		this.parent = parent || null;
+		this.value = value;
+		this.link = [];
+	}
 }
 
-function createTree(nodeCnt, nodes) {
-	const tree = new Array(nodeCnt + 1).fill().map(() => []);
-	nodes.forEach(([parent, child]) => {
-		tree[parent].push(child);
+function createTree(edges) {
+	const nodes = new Map();
+	edges.forEach(([p, c]) => {
+		const parentNode = nodes.has(p) ? nodes.get(p) : new Node(null, p);
+		const childNode = nodes.has(c) ? ndoes.get(c) : new Node(parentNode, c);
+		parentNode.link.push(childNode);
+		if (!nodes.has(p)) nodes.set(p, parentNode);
+		if (!nodes.has(c)) nodes.set(c, childNode);
 	});
-	return tree;
+	return nodes.get(1);
 }
 
-function bfs(tree, subTree, isParentEarly) {
-	if (subTree.length === 0) {
-		return isParentEarly ? 0 : 1;
-	}
-	if (isParentEarly) {
-		const result = Math.min(
-			1 + subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], true), 0),
-			subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], false), 0)
-		);
-		return result;
-	}
-	return (
-		1 + subTree.reduce((prev, cur) => prev + bfs(tree, tree[cur], true), 0)
-	);
+function getTree(nodeCnt, edges) {
+	return createTree(edges);
 }
 
-solution(`16
+const input = `16
 1 2
 1 3
 3 4
@@ -50,7 +37,14 @@ solution(`16
 10 13
 13 14
 14 16
-14 15`);
-
-// 난 잘 풀었는데 왜 실패인것인가
-// dp로 해결할 거야!
+14 15`;
+// let fs = require("fs");
+// let input = fs.readFileSync("/dev/stdin").toString();
+const splittedInput = input
+	.split("\n")
+	.filter((e) => e !== "")
+	.map((line) => line.split(" "));
+const formattedInput = splittedInput.map((arr) => arr.map((e) => parseInt(e)));
+const [nodeCnt] = formattedInput.shift();
+const tree = getTree(nodeCnt, formattedInput);
+console.dir(tree);
