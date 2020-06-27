@@ -1,50 +1,57 @@
-class Node {
-	constructor(parent, value) {
-		this.parent = parent || null;
-		this.value = value;
-		this.link = [];
+let visit = [];
+let dp = [];
+let list = [];
+
+function solution(input) {
+	const splittedInput = input
+		.split("\n")
+		.filter((e) => e !== "")
+		.map((line) => line.split(" "));
+	const formattedInput = splittedInput.map((arr) =>
+		arr.map((e) => parseInt(e))
+	);
+	const [nodeCnt] = formattedInput.shift();
+	init(nodeCnt, formattedInput);
+	splittedInput.splice(0, splittedInput.length);
+	const start = 1;
+	dfs(start);
+	console.log(Math.min(dp[start][0], dp[start][1]));
+}
+
+function init(nodeCnt, nodes) {
+	list = new Array(nodeCnt + 1).fill().map(() => []);
+	nodes.forEach(([parent, child]) => {
+		list[parent].push(child);
+		list[child].push(parent);
+	});
+	dp = new Array(nodeCnt + 1).fill().map(() => []);
+}
+
+function dfs(target) {
+	visit[target] = 1;
+	dp[target][0] = 0;
+	dp[target][1] = 1;
+
+	item = list[target];
+	for (let next of item) {
+		if (visit[next] !== 1) {
+			dfs(next);
+			dp[target][0] += dp[next][1];
+			dp[target][1] += Math.min(dp[next][0], dp[next][1]);
+		}
 	}
 }
 
-function createTree(edges) {
-	const nodes = new Map();
-	edges.forEach(([p, c]) => {
-		const parentNode = nodes.has(p) ? nodes.get(p) : new Node(null, p);
-		const childNode = nodes.has(c) ? ndoes.get(c) : new Node(parentNode, c);
-		parentNode.link.push(childNode);
-		if (!nodes.has(p)) nodes.set(p, parentNode);
-		if (!nodes.has(c)) nodes.set(c, childNode);
-	});
-	return nodes.get(1);
-}
-
-function getTree(nodeCnt, edges) {
-	return createTree(edges);
-}
-
-const input = `16
-1 2
-1 3
-3 4
-4 5
-2 6
-2 7
-6 8
-8 9
-8 10
-8 11
-8 12
-10 13
-13 14
-14 16
-14 15`;
 // let fs = require("fs");
 // let input = fs.readFileSync("/dev/stdin").toString();
-const splittedInput = input
-	.split("\n")
-	.filter((e) => e !== "")
-	.map((line) => line.split(" "));
-const formattedInput = splittedInput.map((arr) => arr.map((e) => parseInt(e)));
-const [nodeCnt] = formattedInput.shift();
-const tree = getTree(nodeCnt, formattedInput);
-console.dir(tree);
+// solution(input);
+solution(createInput(3000));
+
+function createInput(length) {
+	const input = [length];
+	for (let i = 0; i < length - 1; i++) {
+		input.push(`${i} ${i + 1}`);
+	}
+	return input.join("\n");
+}
+// 결국 콜스택 사이즈 문제로 실패
